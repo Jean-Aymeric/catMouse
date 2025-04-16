@@ -22,9 +22,9 @@ public class Cat extends Observable implements Runnable {
 
     private void setState(final CatState state) {
         if (this.state != state) {
-            this.notifyObservers();
             this.state = state;
             System.out.println(this);
+            this.notifyObservers();
         }
     }
 
@@ -41,7 +41,7 @@ public class Cat extends Observable implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (new Random().nextInt() % 3 == 0) {
+            if (new Random().nextInt() % 2 == 0) {
                 this.setState(CatState.AWAKE);
             } else {
                 this.setState(CatState.SLEEPING);

@@ -3,12 +3,17 @@ package com.jad.house;
 public class Mouse implements Runnable, Observer {
     private static int nextId = 1;
     private final int id;
+    private final Cheese cheese;
+    private final Observable observable;
     private MouseState state;
+    private int lifePoints = 5;
 
     public Mouse(final House house) {
         this.id = Mouse.getId();
-        this.state = MouseState.HIDING;
+        this.state = MouseState.DANCING;
         house.subscribe(this);
+        this.cheese = house.getCheese();
+        this.observable = house;
     }
 
     private static int getId() {
@@ -21,23 +26,36 @@ public class Mouse implements Runnable, Observer {
 
     public void setState(final MouseState state) {
         this.state = state;
-        System.out.println(this);
     }
 
     @Override
     public String toString() {
-        return this.id + " <:)))" + ((this.state == MouseState.DANCING) ? "~~" : "--");
+        return this.id + " <:)))" + ((this.state == MouseState.DANCING) ? "~~ " : "-- ") + this.lifePoints;
     }
 
     @Override
     public void run() {
-        for (; ; ) {
+        while (this.isDead()) {
             try {
+                if (this.state == MouseState.DANCING) {
+                    this.cheese.consume();
+                    this.lifePoints = 5;
+                } else {
+                    this.lifePoints--;
+                    if (this.lifePoints <= 0) {
+                        System.out.println(this + " is dead");
+                        this.observable.unsubscribe(this);
+                    }
+                }
                 Thread.sleep(1000);
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
             }
         }
+    }
+
+    private boolean isDead() {
+        return this.lifePoints > 0;
     }
 
     @Override
@@ -57,5 +75,6 @@ public class Mouse implements Runnable, Observer {
         } else {
             this.setState(MouseState.DANCING);
         }
+        System.out.println(this);
     }
 }

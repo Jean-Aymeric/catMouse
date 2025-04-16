@@ -10,7 +10,7 @@ public abstract class Observable {
         this.observers.add(observer);
     }
 
-    void unSubscribe(Observer observer) {
+    void unsubscribe(Observer observer) {
         this.observers.remove(observer);
     }
 

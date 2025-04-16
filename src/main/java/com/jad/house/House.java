@@ -6,6 +6,7 @@ import java.util.List;
 public class House extends Observable implements Observer {
     private final List<Mouse> mouses = new ArrayList<>();
     private final List<Cat> cats = new ArrayList<>();
+    private final Cheese cheese = new Cheese();
     private boolean isACatAwake = false;
 
     public House(int nbMouses, int nbCat) {
@@ -31,8 +32,8 @@ public class House extends Observable implements Observer {
 
     private void setACatAwake(final boolean ACatAwake) {
         if (this.isACatAwake != ACatAwake) {
-            this.notifyObservers();
             this.isACatAwake = ACatAwake;
+            this.notifyObservers();
         }
     }
 
@@ -49,10 +50,8 @@ public class House extends Observable implements Observer {
     public void observe(final Cat cat) {
         if (cat.getState() == CatState.AWAKE) {
             this.setACatAwake(true);
-        } else {
-            if (this.isAtLeastOneCatAwake()) {
-                this.setACatAwake(false);
-            }
+        } else if (!this.isAtLeastOneCatAwake()) {
+            this.setACatAwake(false);
         }
     }
 
@@ -68,5 +67,9 @@ public class House extends Observable implements Observer {
     @Override
     void isObserved(final Observer observer) {
         observer.observe(this);
+    }
+
+    public Cheese getCheese() {
+        return this.cheese;
     }
 }
